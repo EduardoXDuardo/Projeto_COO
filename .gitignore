@@ -1,0 +1,36 @@
+# IntelliJ IDEA
+.idea/
+*.iml
+*.ipr
+*.iws
+
+# Java build output
+*.class
+*.jar
+*.war
+*.ear
+out/
+build/
+target/
+bin/
+
+# Logs and temporary files
+*.log
+*.tmp
+*.swp
+*.bak
+
+# Local environment and secrets
+.env
+.env.*
+!.env.example
+*.local
+
+# Operating systems
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# Editors
+.vscode/
+
