@@ -52,15 +52,15 @@ public abstract class Entity {
         return color;
     }
 
-    public void explode(long currentTime){
-        explosive.drawExplosion(x, y, currentTime);
+    public void explode(long currentTime, GameIO gameIO){
+        explosive.drawExplosion(x, y, currentTime, gameIO);
     }
 
     public void shoot(){
         shooter.shot();
     }
 
-    public abstract void draw(long currentTime);
+    public abstract void draw(long currentTime, GameIO gameIO);
 
-    public abstract void move(long delta);
+    public abstract void move(long delta, GameIO gameIO);
 }

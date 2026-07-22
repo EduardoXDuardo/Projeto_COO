@@ -22,24 +22,24 @@ public class Projectile extends Entity {
     }
 
     @Override
-    public void draw(long currentTime) {
+    public void draw(long currentTime, GameIO gameIO) {
         Color color = getColor();
         double x = getX();
         double y = getY();
 
-        GameLib.setColor(color);
+        gameIO.setColor(color);
 
         if (color == Color.GREEN) { // desenha projetil do player
-            GameLib.drawLine(x, y - 5, x, y + 5);
-            GameLib.drawLine(x - 1, y - 3, x - 1, y + 3);
-            GameLib.drawLine(x + 1, y - 3, x + 1, y + 3);
+            gameIO.drawLine(x, y - 5, x, y + 5);
+            gameIO.drawLine(x - 1, y - 3, x - 1, y + 3);
+            gameIO.drawLine(x + 1, y - 3, x + 1, y + 3);
         } else if (color == Color.RED) { // desenha projetil do player
-            GameLib.drawCircle(x, y, getRadius());
+            gameIO.drawCircle(x, y, getRadius());
         }
     }
 
     @Override
-    public void move(long delta) {
+    public void move(long delta, GameIO gameIO) {
         setX(getX() + xVelocity * delta);
         setY(getY() + yVelocity * delta);
     }

@@ -1,6 +1,7 @@
 package Domain.Enemies;
 
 import Domain.Enemy;
+import Domain.GameIO;
 
 import java.awt.*;
 
@@ -11,7 +12,7 @@ public class EnemyType3 extends Enemy {
     }
 
     @Override
-    public void draw(long currentTime) {
+    public void draw(long currentTime, GameIO gameIO) {
 
     }
 

@@ -1,5 +1,7 @@
 package Domain.Modules;
 
+import Domain.GameIO;
+
 import java.awt.*;
 
 public class Explosive {
@@ -34,10 +36,10 @@ public class Explosive {
     }
     */
 
-    public void drawExplosion(double x, double y, long currentTime){
+    public void drawExplosion(double x, double y, long currentTime, GameIO gameIO){
         if (canExplode) {
             double alpha = (currentTime - explosionStart) / (explosionDuration);
-            GameLib.drawExplosion(x, y, alpha);
+            gameIO.drawExplosion(x, y, alpha);
         }
     }
 }

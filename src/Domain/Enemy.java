@@ -27,7 +27,7 @@ public abstract class Enemy extends Entity   {
         return rotationVelocity;
     }
 
-    public void move(long delta) {
+    public void move(long delta, GameIO gameIO) {
         setX(getX() + velocity * Math.cos(angle) * delta);
         setY(getY() + velocity * Math.sin(angle) * delta * (-1.0));
         angle += rotationVelocity * delta;
