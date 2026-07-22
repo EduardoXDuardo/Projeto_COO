@@ -1,9 +1,10 @@
 package Domain;
 
-import Domain.Modules.Explosive;
-import Domain.Modules.Shooter;
+import Domain.Components.Explosion;
+import Domain.Components.ShootingCooldown;
 
 import java.awt.Color;
+import java.util.Objects;
 
 public abstract class Entity {
 
@@ -11,21 +12,21 @@ public abstract class Entity {
     private double y;
     private final double radius;
     private final Color color;
+    private final Explosion explosion;
+    private final ShootingCooldown shootingCooldown;
 
-    private final Explosive explosive;
-    private final Shooter shooter;
+    protected Entity(double x, double y, double radius, Color color,
+                     Explosion explosion, ShootingCooldown shootingCooldown) {
+        if (radius < 0) {
+            throw new IllegalArgumentException("Radius cannot be negative");
+        }
 
-    // algo para spawnar
-
-    public Entity(double x, double y, double radius, Color color,
-                  double explosionDuration, boolean canExplode, // explosive
-                  boolean canShoot, double shootingInterval) { // shooter
         this.x = x;
         this.y = y;
         this.radius = radius;
-        this.color = color;
-        this.explosive = new Explosive(explosionDuration, canExplode);
-        this.shooter = new Shooter(canShoot, shootingInterval);
+        this.color = Objects.requireNonNull(color, "color");
+        this.explosion = Objects.requireNonNull(explosion, "explosion");
+        this.shootingCooldown = Objects.requireNonNull(shootingCooldown, "shootingCooldown");
     }
 
     public double getX() {
@@ -52,15 +53,50 @@ public abstract class Entity {
         return color;
     }
 
-    public void explode(long currentTime, GameIO gameIO){
-        explosive.drawExplosion(x, y, currentTime, gameIO);
+    public boolean isExploding() {
+        return explosion.isRunning();
     }
 
-    public void shoot(){
-        shooter.shot();
+    public boolean isExplosionFinished(long currentTime) {
+        return explosion.isFinished(currentTime);
     }
 
-    public abstract void draw(long currentTime, GameIO gameIO);
+    public boolean startExplosion(long currentTime) {
+        return explosion.start(currentTime);
+    }
 
-    public abstract void move(long delta, GameIO gameIO);
+    public void resetExplosion() {
+        explosion.reset();
+    }
+
+    protected boolean canShoot(long currentTime) {
+        return !isExploding() && shootingCooldown.isReady(currentTime);
+    }
+
+    protected void registerShot(long currentTime) {
+        shootingCooldown.recordShot(currentTime);
+    }
+
+    protected void scheduleNextShot(long nextShotTime) {
+        shootingCooldown.scheduleNextShot(nextShotTime);
+    }
+
+    public final void draw(long currentTime, GameIO gameIO) {
+        if (isExploding()) {
+            explosion.draw(x, y, currentTime, gameIO);
+            return;
+        }
+
+        drawActive(gameIO);
+    }
+
+    public final void move(long delta, GameIO gameIO) {
+        if (!isExploding()) {
+            moveActive(delta, gameIO);
+        }
+    }
+
+    protected abstract void drawActive(GameIO gameIO);
+
+    protected abstract void moveActive(long delta, GameIO gameIO);
 }

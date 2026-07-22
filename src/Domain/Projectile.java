@@ -1,5 +1,8 @@
 package Domain;
 
+import Domain.Components.Explosion;
+import Domain.Components.ShootingCooldown;
+
 import java.awt.*;
 
 public class Projectile extends Entity {
@@ -8,7 +11,7 @@ public class Projectile extends Entity {
     private final double yVelocity;
 
     private Projectile(double x, double y, double radius, Color color, double xVelocity, double yVelocity) {
-        super(x, y, radius, color, -1, false, false, -1);
+        super(x, y, radius, color, Explosion.disabled(), ShootingCooldown.disabled());
         this.xVelocity = xVelocity;
         this.yVelocity = yVelocity;
     }
@@ -22,7 +25,7 @@ public class Projectile extends Entity {
     }
 
     @Override
-    public void draw(long currentTime, GameIO gameIO) {
+    protected void drawActive(GameIO gameIO) {
         Color color = getColor();
         double x = getX();
         double y = getY();
@@ -39,7 +42,7 @@ public class Projectile extends Entity {
     }
 
     @Override
-    public void move(long delta, GameIO gameIO) {
+    protected void moveActive(long delta, GameIO gameIO) {
         setX(getX() + xVelocity * delta);
         setY(getY() + yVelocity * delta);
     }
