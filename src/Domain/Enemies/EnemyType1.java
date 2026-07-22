@@ -39,7 +39,7 @@ public class EnemyType1 extends Enemy {
         Projectile projectile = Projectile.createEnemyProjectile(
                 getX(), getY(), xVelocity, yVelocity);
 
-        long delay = ThreadLocalRandom.current().nextLong(200, 701);
+        long delay = ThreadLocalRandom.current().nextLong(200, 700);
         scheduleNextShot(currentTime + delay);
         return Collections.singletonList(projectile);
     }
