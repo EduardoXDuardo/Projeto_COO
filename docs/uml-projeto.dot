@@ -1,0 +1,143 @@
+digraph ProjetoCOO {
+    graph [
+        rankdir=TB,
+        newrank=true,
+        compound=true,
+        outputorder=edgesfirst,
+        bgcolor="white",
+        pad=0.40,
+        nodesep=0.48,
+        ranksep=0.72,
+        splines=polyline,
+        fontname="Arial",
+        fontsize=18,
+        labelloc=t,
+        label="Projeto COO — Diagrama de classes e dependências"
+    ];
+
+    node [
+        shape=record,
+        style="rounded,filled",
+        fillcolor="#ffffff",
+        color="#334155",
+        fontcolor="#0f172a",
+        fontname="Arial",
+        fontsize=10.5,
+        penwidth=1.2,
+        margin="0.10,0.07"
+    ];
+
+    edge [
+        color="#64748b",
+        fontcolor="#475569",
+        fontname="Arial",
+        fontsize=8.5,
+        penwidth=1.1,
+        arrowsize=0.72
+    ];
+
+    subgraph cluster_entry {
+        label="Aplicação e integração";
+        color="#94a3b8";
+        style="rounded,dashed";
+        fontsize=13;
+
+        Main [fillcolor="#f8fafc", label="{Main|+ main(args) : void\l\<\<cria\>\> Game, GameLibAdapter\l}"];
+        GameLibAdapter [fillcolor="#f8fafc", label="{\<\<adapter\>\>\nGameLibAdapter|\<\<implementa\>\> GameIO\l\<\<delega\>\> GameLib\l+ entrada e operações gráficas\l}"];
+        GameLib [fillcolor="#f1f5f9", label="{\<\<biblioteca fechada\>\>\nGameLib|+ WIDTH, HEIGHT\l+ teclado\l+ desenho e display\l}"];
+        JavaSE [shape=note, style="filled", fillcolor="#f8fafc", color="#94a3b8", label="Java SE\nCollections / Optional\nAWT / Swing\nThreadLocalRandom"];
+
+        { rank=same; Main; GameLibAdapter; GameLib; JavaSE; }
+    }
+
+    subgraph cluster_runner {
+        label="Runner";
+        color="#60a5fa";
+        style="rounded,dashed";
+        fontsize=13;
+
+        Game [fillcolor="#eff6ff", label="{Game|- gameIO : GameIO\l- player : Player\l- enemies : List\l- playerProjectiles : List\l- enemyProjectiles : List\l|+ run() : void\l- updateProjectiles()\l- updateEnemies()\l- updatePlayer()\l- draw()\l}"];
+        EnemySpawner [fillcolor="#eff6ff", label="{EnemySpawner|- gameIO : GameIO\l- próximos spawns\l- formação do EnemyType2\l|+ spawn(time) : List\<Enemy\>\l- cria EnemyType1 / 2 / 3\l}"];
+        CollisionDetector [fillcolor="#eff6ff", label="{CollisionDetector|verifica Player, Enemy e Projectile\l|+ detect(player, enemies, projectiles, time)\l- detectPlayerCollisions()\l- detectEnemyCollisions()\l- collides() : boolean\l}"];
+        StarField [fillcolor="#eff6ff", label="{StarField|- gameIO : GameIO\l- distantLayer : StarLayer\l- nearLayer : StarLayer\l|+ draw(delta) : void\l}"];
+        StarLayer [fillcolor="#eff6ff", label="{\<\<interna\>\>\nStarLayer|- positions : double[]\l- speed, size, offset\l- color : Color\l|+ draw(delta, gameIO) : void\l}"];
+
+        { rank=same; EnemySpawner; CollisionDetector; StarField; }
+    }
+
+    subgraph cluster_domain {
+        label="Domain";
+        color="#34d399";
+        style="rounded,dashed";
+        fontsize=13;
+
+        GameIO [fillcolor="#ecfdf5", label="{\<\<interface\>\>\nGameIO|+ getWidth(), getHeight()\l+ initializeGraphics()\l+ isKeyPressed(Key)\l+ operações de desenho\l+ display()\l}"];
+        Entity [fillcolor="#ecfdf5", label="{\<\<abstrata\>\>\nEntity|- x, y, radius\l- color : Color\l- explosion : Explosion\l- shootingCooldown : ShootingCooldown\l|+ draw(time, gameIO)\l+ move(delta, gameIO)\l+ startExplosion(time)\l# drawActive(gameIO)\l# moveActive(delta, gameIO)\l}"];
+        Player [fillcolor="#ecfdf5", label="{Player|- velocity : double\l|+ tryShoot(time, gameIO) : Optional\<Projectile\>\l- keepInsideGameArea()\l}"];
+        Projectile [fillcolor="#ecfdf5", label="{Projectile|- xVelocity, yVelocity\l|+ createPlayerProjectile()\l+ createEnemyProjectile()\l+ isOutsideGameArea() : boolean\l}"];
+        Enemy [fillcolor="#ecfdf5", label="{\<\<abstrata\>\>\nEnemy|- angle, velocity\l- rotationVelocity\l|+ tryShoot(time, player) : List\<Projectile\>\l+ isOutsideGameArea() : boolean\l}"];
+
+        subgraph cluster_components {
+            label="Components";
+            color="#c084fc";
+            style="rounded,dashed";
+            fontsize=12;
+
+            Explosion [fillcolor="#faf5ff", label="{Explosion|- enabled, duration, startTime\l|+ enabled(duration)\l+ disabled()\l+ start(time) : boolean\l+ isFinished(time) : boolean\l+ draw(x, y, time, gameIO)\l+ reset()\l}"];
+            ShootingCooldown [fillcolor="#faf5ff", label="{ShootingCooldown|- enabled, interval, nextShotTime\l|+ enabled(interval, firstShot)\l+ disabled()\l+ isReady(time) : boolean\l+ recordShot(time)\l+ scheduleNextShot(time)\l}"];
+
+            { rank=same; Explosion; ShootingCooldown; }
+        }
+
+        subgraph cluster_enemies {
+            label="Enemies";
+            color="#f59e0b";
+            style="rounded,dashed";
+            fontsize=12;
+
+            EnemyType1 [fillcolor="#fffbeb", label="{EnemyType1|movimento vertical\ltiro reto periódico\l}"];
+            EnemyType2 [fillcolor="#fffbeb", label="{EnemyType2|formação e trajetória curva\ldisparo triplo com dispersão\l}"];
+            EnemyType3 [fillcolor="#fffbeb", label="{EnemyType3|movimento oscilante\lrajada direcionada de 5 tiros\l}"];
+
+            { rank=same; EnemyType1; EnemyType2; EnemyType3; }
+        }
+
+        { rank=same; GameIO; Entity; }
+        { rank=same; Player; Projectile; Enemy; }
+    }
+
+    Legend [
+        shape=note,
+        style="filled",
+        fillcolor="#f8fafc",
+        color="#94a3b8",
+        fontsize=9.5,
+        label="Legenda UML\ntriângulo: herança / implementação\ndiamante cheio: composição\ndiamante vazio: agregação\nseta tracejada: dependência"
+    ];
+
+    Main:s -> Game:n [style=dashed, arrowhead=vee, label="cria e executa", minlen=1];
+    GameLibAdapter:s -> GameIO:n [style=dashed, arrowhead=empty, color="#2563eb", label="implementa", minlen=2];
+
+    Game -> EnemySpawner [style=dashed, arrowhead=vee];
+    Game -> CollisionDetector [dir=both, arrowtail=diamond, arrowhead=none, label="1"];
+    Game -> StarField [dir=both, arrowtail=diamond, arrowhead=none, label="1"];
+    StarField -> StarLayer [dir=both, arrowtail=diamond, arrowhead=none, label="2"];
+
+    Game -> GameIO [dir=both, arrowtail=odiamond, arrowhead=none, label="1", constraint=false];
+    Game -> Player [dir=both, arrowtail=diamond, arrowhead=none, label="1", constraint=false];
+    Game -> Enemy [dir=both, arrowtail=diamond, arrowhead=none, label="0..*", constraint=false];
+    Game -> Projectile [dir=both, arrowtail=diamond, arrowhead=none, label="0..* (2 listas)", constraint=false];
+
+    Entity -> Player [dir=back, arrowtail=empty, color="#059669"];
+    Entity -> Projectile [dir=back, arrowtail=empty, color="#059669"];
+    Entity -> Enemy [dir=back, arrowtail=empty, color="#059669"];
+    Enemy -> EnemyType1 [dir=back, arrowtail=empty, color="#d97706"];
+    Enemy -> EnemyType2 [dir=back, arrowtail=empty, color="#d97706"];
+    Enemy -> EnemyType3 [dir=back, arrowtail=empty, color="#d97706"];
+
+    Entity -> Explosion [dir=both, arrowtail=diamond, arrowhead=none, label="1"];
+    Entity -> ShootingCooldown [dir=both, arrowtail=diamond, arrowhead=none, label="1"];
+
+    Game -> Entity [style=invis, weight=20];
+    JavaSE -> Legend [style=invis];
+}
