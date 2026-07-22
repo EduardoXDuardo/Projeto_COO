@@ -15,6 +15,11 @@ public final class GameLibAdapter implements GameIO {
     }
 
     @Override
+    public void initializeGraphics() {
+        GameLib.initGraphics();
+    }
+
+    @Override
     public boolean isKeyPressed(Key key) {
         int gameLibKey;
 
@@ -67,5 +72,15 @@ public final class GameLibAdapter implements GameIO {
     @Override
     public void drawExplosion(double x, double y, double alpha) {
         GameLib.drawExplosion(x, y, alpha);
+    }
+
+    @Override
+    public void fillRect(double x, double y, double width, double height) {
+        GameLib.fillRect(x, y, width, height);
+    }
+
+    @Override
+    public void display() {
+        GameLib.display();
     }
 }

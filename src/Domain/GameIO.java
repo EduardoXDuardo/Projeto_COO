@@ -17,6 +17,8 @@ public interface GameIO {
 
     int getHeight();
 
+    void initializeGraphics();
+
     boolean isKeyPressed(Key key);
 
     void setColor(Color color);
@@ -28,4 +30,8 @@ public interface GameIO {
     void drawCircle(double x, double y, double radius);
 
     void drawExplosion(double x, double y, double alpha);
+
+    void fillRect(double x, double y, double width, double height);
+
+    void display();
 }
