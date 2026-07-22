@@ -3,7 +3,7 @@ package Domain;
 import Domain.Components.Explosion;
 import Domain.Components.ShootingCooldown;
 
-import java.awt.*;
+import java.awt.Color;
 
 public class Projectile extends Entity {
 
@@ -45,5 +45,13 @@ public class Projectile extends Entity {
     protected void moveActive(long delta, GameIO gameIO) {
         setX(getX() + xVelocity * delta);
         setY(getY() + yVelocity * delta);
+    }
+
+    public boolean isOutsideGameArea(GameIO gameIO) {
+        double margin = Math.max(1.0, getRadius());
+        return getX() < -margin
+                || getX() > gameIO.getWidth() + margin
+                || getY() < -margin
+                || getY() > gameIO.getHeight() + margin;
     }
 }
